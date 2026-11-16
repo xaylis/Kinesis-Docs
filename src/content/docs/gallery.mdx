@@ -1,0 +1,92 @@
+---
+title: Gallery
+description: Kinesis effects in game.
+tableOfContents: false
+---
+
+import { Image } from 'astro:assets';
+import veins from '../../assets/gallery/regen-veins.jpg';
+import bone from '../../assets/gallery/regen-bone.jpg';
+import muscle from '../../assets/gallery/regen-muscle.jpg';
+import done from '../../assets/gallery/regen-done.jpg';
+import disintegrate from '../../assets/gallery/disintegrate.jpg';
+import petrifyFront from '../../assets/gallery/petrify-front.jpg';
+import petrify from '../../assets/gallery/petrify.jpg';
+import hologram from '../../assets/gallery/hologram.jpg';
+import aura from '../../assets/gallery/aura.jpg';
+import afterimage from '../../assets/gallery/afterimage.jpg';
+import impactFrame from '../../assets/gallery/impact-frame.jpg';
+import impact from '../../assets/gallery/impact.jpg';
+import beam from '../../assets/gallery/beam.jpg';
+import shockwave from '../../assets/gallery/shockwave.jpg';
+import lightning from '../../assets/gallery/lightning.jpg';
+import summon from '../../assets/gallery/summon-circle.jpg';
+import orb from '../../assets/gallery/orb.jpg';
+import nebula from '../../assets/gallery/nebula-side.jpg';
+import nebulaWide from '../../assets/gallery/nebula.jpg';
+import timeStop from '../../assets/gallery/time-stop.jpg';
+import timeStopGrey from '../../assets/gallery/time-stop-grey.jpg';
+import ocRegen from '../../assets/gallery/oculus-regen.jpg';
+import ocHologram from '../../assets/gallery/oculus-hologram.jpg';
+import ocAura from '../../assets/gallery/oculus-aura.jpg';
+import ocLightning from '../../assets/gallery/oculus-lightning.jpg';
+import ocNebula from '../../assets/gallery/oculus-nebula.jpg';
+import ocShockwave from '../../assets/gallery/oculus-shockwave.jpg';
+
+<style>{`
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1rem; }
+.gallery figure { margin: 0; }
+.gallery img { border-radius: 0.5rem; width: 100%; height: auto; }
+.gallery figcaption { font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); margin-top: 0.25rem; }
+`}</style>
+
+## Regeneration
+
+A husk grows back from nothing: veins along the skeleton, then bone, muscle and finally its own skin.
+
+<div class="gallery">
+  <figure><Image src={veins} alt="Veins growing along the skeleton from a single cell" /><figcaption>Veins and the first cell</figcaption></figure>
+  <figure><Image src={bone} alt="Bone layer forming at the torso" /><figcaption>Bone forms behind the front</figcaption></figure>
+  <figure><Image src={muscle} alt="Muscle layer over the limbs" /><figcaption>Muscle, skin following</figcaption></figure>
+  <figure><Image src={done} alt="Husk fully restored with steam" /><figcaption>Restored</figcaption></figure>
+</div>
+
+## Model materials
+
+<div class="gallery">
+  <figure><Image src={disintegrate} alt="Husk burning away into embers and coloured shards" /><figcaption><code>kinesis:disintegrate</code></figcaption></figure>
+  <figure><Image src={petrifyFront} alt="Villager turning to stone from the feet up" /><figcaption><code>kinesis:petrify</code>, mid-way</figcaption></figure>
+  <figure><Image src={petrify} alt="Villager as a stone statue" /><figcaption>A frozen statue</figcaption></figure>
+  <figure><Image src={hologram} alt="Cyan hologram copy of a husk over a rune" /><figcaption><code>kinesis:hologram</code></figcaption></figure>
+  <figure><Image src={aura} alt="Husk wrapped in a golden aura with flames" /><figcaption><code>kinesis:aura</code></figcaption></figure>
+  <figure><Image src={afterimage} alt="Blue afterimages trailing a moving husk" /><figcaption><code>kinesis:afterimage</code></figcaption></figure>
+</div>
+
+## Impacts, beams and screen effects
+
+<div class="gallery">
+  <figure><Image src={impactFrame} alt="Black and white manga impact frame with speed lines" /><figcaption><code>kinesis:impact</code> frame</figcaption></figure>
+  <figure><Image src={impact} alt="White shockwave ring and sparks around a husk" /><figcaption>The hit after the frame</figcaption></figure>
+  <figure><Image src={beam} alt="Cyan energy beam fired from a husk" /><figcaption><code>kinesis:beam</code></figcaption></figure>
+  <figure><Image src={shockwave} alt="Golden ground shockwave with sparks and a scorch decal" /><figcaption><code>kinesis:shockwave</code></figcaption></figure>
+  <figure><Image src={lightning} alt="Branching lightning bolt striking the ground" /><figcaption><code>kinesis:lightning</code></figcaption></figure>
+  <figure><Image src={summon} alt="Rune circle on the ground with a beam into the sky" /><figcaption><code>kinesis:summon_circle</code></figcaption></figure>
+  <figure><Image src={orb} alt="Glowing purple orb over a rune ring" /><figcaption><code>kinesis:orb</code></figcaption></figure>
+  <figure><Image src={nebula} alt="A glowing spiral disc of around a hundred thousand particles" /><figcaption><code>kinesis:nebula</code>, GPU particles</figcaption></figure>
+  <figure><Image src={nebulaWide} alt="The nebula from further back at night" /><figcaption><code>kinesis:nebula</code> from further back</figcaption></figure>
+  <figure><Image src={timeStop} alt="Inverted colours inside an expanding dome" /><figcaption><code>kinesis:time_stop</code>, the dome</figcaption></figure>
+  <figure><Image src={timeStopGrey} alt="Desaturated world inside the dome" /><figcaption>Time stopped</figcaption></figure>
+</div>
+
+## With a shaderpack
+
+Oculus with Complementary Reimagined.
+
+<div class="gallery">
+  <figure><Image src={ocRegen} alt="Regeneration under a shaderpack" /><figcaption>Regeneration</figcaption></figure>
+  <figure><Image src={ocHologram} alt="Hologram under a shaderpack" /><figcaption>Hologram</figcaption></figure>
+  <figure><Image src={ocAura} alt="Aura under a shaderpack" /><figcaption>Aura</figcaption></figure>
+  <figure><Image src={ocShockwave} alt="Shockwave under a shaderpack" /><figcaption>Shockwave</figcaption></figure>
+  <figure><Image src={ocLightning} alt="Lightning under a shaderpack" /><figcaption>Lightning</figcaption></figure>
+  <figure><Image src={ocNebula} alt="GPU particle nebula under a shaderpack" /><figcaption>GPU particles</figcaption></figure>
+</div>

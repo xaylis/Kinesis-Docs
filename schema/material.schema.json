@@ -1,0 +1,2781 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://xaylis.github.io/Kinesis-Docs/schema/material.schema.json",
+  "title": "Kinesis material",
+  "$ref": "#/definitions/material_object",
+  "definitions": {
+    "effect": {
+      "type": "object",
+      "description": "A Kinesis effect.",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "Optional schema URL for editor support."
+        },
+        "duration": {
+          "type": "number",
+          "description": "Length in seconds.",
+          "default": 2
+        },
+        "loop": {
+          "type": "boolean",
+          "description": "Repeat until stopped.",
+          "default": false
+        },
+        "params": {
+          "$ref": "#/definitions/params",
+          "description": "Params with their defaults: numbers, booleans or colours. Builders and commands override them; expressions use them by name and colour fields as `$name`."
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/track_particles"
+              },
+              {
+                "$ref": "#/definitions/track_trail"
+              },
+              {
+                "$ref": "#/definitions/track_tendrils"
+              },
+              {
+                "$ref": "#/definitions/track_beam"
+              },
+              {
+                "$ref": "#/definitions/track_lightning"
+              },
+              {
+                "$ref": "#/definitions/track_ring"
+              },
+              {
+                "$ref": "#/definitions/track_mesh"
+              },
+              {
+                "$ref": "#/definitions/track_decal"
+              },
+              {
+                "$ref": "#/definitions/track_model"
+              },
+              {
+                "$ref": "#/definitions/track_screen"
+              },
+              {
+                "$ref": "#/definitions/track_effect"
+              }
+            ]
+          },
+          "description": "The layers of the effect."
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/event"
+          },
+          "description": "Sounds, child effects and named events."
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "event": {
+      "type": "object",
+      "description": "A sound, child effect or named event at a moment in time.",
+      "properties": {
+        "time": {
+          "type": "number",
+          "description": "When it fires, in seconds.",
+          "default": 0
+        },
+        "sound": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "Sound event to play."
+        },
+        "volume": {
+          "$ref": "#/definitions/number",
+          "description": "Sound volume.",
+          "default": 1
+        },
+        "pitch": {
+          "$ref": "#/definitions/number",
+          "description": "Sound pitch.",
+          "default": 1
+        },
+        "play": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "Effect to play."
+        },
+        "event": {
+          "type": "string",
+          "description": "Name passed to `EffectHandle.on(name, ...)` listeners."
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the sound or child effect happens."
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "attach_object": {
+      "type": "object",
+      "description": "Where a track sits. Also accepts the strings \"self\" and \"target\".",
+      "properties": {
+        "anchor": {
+          "enum": [
+            "self",
+            "target"
+          ],
+          "description": "Which anchor to use: the effect's own, or the target set with `.to(...)`.",
+          "default": "self"
+        },
+        "bone": {
+          "$ref": "#/definitions/bones",
+          "description": "A bone name or a list of names to try in order, such as `[\"chest\", \"body\"]`. Falls back to the anchor itself when none exist."
+        },
+        "offset": {
+          "$ref": "#/definitions/vector",
+          "description": "Offset in blocks, in the frame of the anchor (x right, y up, z forward).",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "rotate": {
+          "$ref": "#/definitions/vector",
+          "description": "Extra rotation in degrees: pitch, yaw, roll.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "follow": {
+          "type": "boolean",
+          "description": "Keep following the anchor. When false the track stays where it started.",
+          "default": true
+        },
+        "align": {
+          "enum": [
+            "body",
+            "head",
+            "world",
+            "camera",
+            "bone"
+          ],
+          "description": "Which way the frame faces: the entity's body, its head, the world axes, the camera, or the bone it is attached to, following the bone as it swings (up runs along the bone toward its parent).",
+          "default": "body"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "material_object": {
+      "type": "object",
+      "description": "A material, inline or as an asset.",
+      "properties": {
+        "parent": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "A material asset to start from; fields here override it."
+        },
+        "texture": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "Texture id. `kinesis:soft` style ids resolve to `textures/fx/<name>.png`; full paths ending in .png are used as is. Each track type picks a sensible default."
+        },
+        "frames": {
+          "$ref": "#/definitions/vector",
+          "description": "Flipbook layout as [columns, rows]. Particles pick frames by life, randomly, or at `fps`.",
+          "default": [
+            1,
+            1,
+            0
+          ]
+        },
+        "fps": {
+          "type": "number",
+          "description": "Flipbook speed in frames per second; 0 plays over life.",
+          "default": 0
+        },
+        "blend": {
+          "enum": [
+            "add",
+            "alpha",
+            "cutout",
+            "opaque"
+          ],
+          "description": "How the material combines with the scene.",
+          "default": "add"
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Tint multiplied with the texture.",
+          "default": "#ffffff"
+        },
+        "alpha": {
+          "$ref": "#/definitions/number",
+          "description": "Opacity multiplier.",
+          "default": 1
+        },
+        "glow": {
+          "$ref": "#/definitions/number",
+          "description": "How strongly the material feeds Kinesis's bloom. 1 is a clear glow; values above 2 bloom heavily.",
+          "default": 0
+        },
+        "gradient": {
+          "$ref": "#/definitions/color",
+          "description": "Gradient map: replaces colour by looking this gradient up with `gradient_by`.",
+          "default": "#ffffff"
+        },
+        "gradient_by": {
+          "enum": [
+            "luma",
+            "alpha",
+            "life",
+            "u",
+            "v",
+            "fresnel"
+          ],
+          "description": "What drives the gradient map.",
+          "default": "luma"
+        },
+        "scroll": {
+          "$ref": "#/definitions/vector",
+          "description": "Texture scroll speed as [u, v] per second.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "noise": {
+          "$ref": "#/definitions/material_noise",
+          "description": "Animated noise."
+        },
+        "dissolve": {
+          "$ref": "#/definitions/material_dissolve",
+          "description": "Noise-driven erosion."
+        },
+        "fresnel": {
+          "$ref": "#/definitions/material_fresnel",
+          "description": "Rim lighting for meshes and models."
+        },
+        "shading": {
+          "$ref": "#/definitions/material_shading",
+          "description": "Lights meshes, ribbons and model layers like solid, wet or translucent surfaces."
+        },
+        "soft": {
+          "type": "number",
+          "description": "Fades the material out over this many blocks where it meets the world, hiding hard intersections.",
+          "default": 0
+        },
+        "distortion": {
+          "$ref": "#/definitions/number",
+          "description": "Turns the material into heat haze: the scene behind is warped by this much. Colour is ignored.",
+          "default": 0
+        },
+        "lit": {
+          "type": "boolean",
+          "description": "Darken with the world light level.",
+          "default": false
+        },
+        "cull": {
+          "type": "boolean",
+          "description": "Hide back faces.",
+          "default": false
+        },
+        "depth_test": {
+          "type": "boolean",
+          "description": "Hide behind world geometry.",
+          "default": true
+        },
+        "shader": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "A custom core shader, `assets/<ns>/shaders/core/<path>.json`, using the Kinesis vertex format."
+        },
+        "uniforms": {
+          "$ref": "#/definitions/uniforms",
+          "description": "Extra float uniforms for a custom shader: name to number or expression."
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_particles": {
+      "type": "object",
+      "description": "Spawns and simulates particles.",
+      "properties": {
+        "type": {
+          "enum": [
+            "particles"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "emitter": {
+          "$ref": "#/definitions/emitter",
+          "description": "When and where particles are born."
+        },
+        "particle": {
+          "$ref": "#/definitions/particle",
+          "description": "How each particle looks and moves."
+        },
+        "forces": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/force_gravity"
+              },
+              {
+                "$ref": "#/definitions/force_drag"
+              },
+              {
+                "$ref": "#/definitions/force_wind"
+              },
+              {
+                "$ref": "#/definitions/force_vortex"
+              },
+              {
+                "$ref": "#/definitions/force_attractor"
+              },
+              {
+                "$ref": "#/definitions/force_curl"
+              },
+              {
+                "$ref": "#/definitions/force_orbit"
+              }
+            ]
+          },
+          "description": "Forces acting on every particle."
+        },
+        "spawn": {
+          "$ref": "#/definitions/particle_spawn",
+          "description": "Effects that particles start."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_trail": {
+      "type": "object",
+      "description": "A ribbon that follows a moving point.",
+      "properties": {
+        "type": {
+          "enum": [
+            "trail"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "length": {
+          "type": "number",
+          "description": "Seconds of history the trail keeps.",
+          "default": 0.3
+        },
+        "width": {
+          "$ref": "#/definitions/number",
+          "description": "Width in blocks. `t` runs along the trail from head (0) to tail (1).",
+          "default": 0.2
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour along the trail, head to tail.",
+          "default": "#ffffff"
+        },
+        "edge": {
+          "$ref": "#/definitions/attach",
+          "description": "Optional second point. The trail then sweeps the surface between `at` and `edge`, like a sword swing."
+        },
+        "min_step": {
+          "type": "number",
+          "description": "Smallest movement that adds a point.",
+          "default": 0.02
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_tendrils": {
+      "type": "object",
+      "description": "Growing, branching curves.",
+      "properties": {
+        "type": {
+          "enum": [
+            "tendrils"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "path": {
+          "enum": [
+            "random",
+            "bones",
+            "points",
+            "target"
+          ],
+          "description": "`bones` grows along the anchored entity's skeleton, `points` through `points`, `target` toward the target, `random` wanders outward.",
+          "default": "random"
+        },
+        "points": {
+          "$ref": "#/definitions/points",
+          "description": "Points for `path: points`, as [[x, y, z], ...]."
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of main strands (random and target paths).",
+          "default": 6
+        },
+        "length": {
+          "type": "number",
+          "description": "Strand length in blocks for random paths.",
+          "default": 1.5
+        },
+        "wander": {
+          "type": "number",
+          "description": "How much strands meander, 0..1.",
+          "default": 0.35
+        },
+        "branch": {
+          "type": "number",
+          "description": "Chance per segment of splitting off a branch.",
+          "default": 0.25
+        },
+        "depth": {
+          "type": "integer",
+          "description": "How many times branches can branch again.",
+          "default": 2
+        },
+        "segments": {
+          "type": "integer",
+          "description": "Segments per strand.",
+          "default": 16
+        },
+        "grow": {
+          "$ref": "#/definitions/number",
+          "description": "How much has grown, 0..1. Defaults to `t`, so strands grow over the whole track.",
+          "default": -1
+        },
+        "width": {
+          "$ref": "#/definitions/number",
+          "description": "Width in blocks. `t` runs along each strand from root (0) to tip (1); branches are thinner.",
+          "default": 0.04
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour along each strand, root to tip.",
+          "default": "#ffffff"
+        },
+        "pulse": {
+          "$ref": "#/definitions/number",
+          "description": "Brightness pulses travelling outward along the strands.",
+          "default": 0
+        },
+        "inset": {
+          "type": "number",
+          "description": "For bone paths: pull strands this far toward the bones' centre line, hiding them inside the body.",
+          "default": 0
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_beam": {
+      "type": "object",
+      "description": "A beam between two points.",
+      "properties": {
+        "type": {
+          "enum": [
+            "beam"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "to": {
+          "$ref": "#/definitions/attach",
+          "description": "End point. Defaults to the target; without one the beam fires `length` blocks forward."
+        },
+        "length": {
+          "$ref": "#/definitions/number",
+          "description": "Length when there is no end point.",
+          "default": 16
+        },
+        "width": {
+          "$ref": "#/definitions/number",
+          "description": "Width in blocks. `t` runs along the beam, start to end.",
+          "default": 0.4
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Outer colour.",
+          "default": "#66ccff"
+        },
+        "core_color": {
+          "$ref": "#/definitions/color",
+          "description": "Core colour.",
+          "default": "#ffffff"
+        },
+        "core": {
+          "$ref": "#/definitions/number",
+          "description": "Core width as a fraction of the beam.",
+          "default": 0.35
+        },
+        "wobble": {
+          "$ref": "#/definitions/number",
+          "description": "Sideways wobble in blocks.",
+          "default": 0
+        },
+        "wobble_speed": {
+          "$ref": "#/definitions/number",
+          "description": "Wobble speed.",
+          "default": 6
+        },
+        "scroll": {
+          "$ref": "#/definitions/number",
+          "description": "Texture scroll along the beam per second.",
+          "default": 2
+        },
+        "grow": {
+          "$ref": "#/definitions/number",
+          "description": "How much of the beam has extended, 0..1.",
+          "default": 1
+        },
+        "raycast": {
+          "type": "boolean",
+          "description": "Stop the beam at the first block it hits.",
+          "default": false
+        },
+        "segments": {
+          "type": "integer",
+          "description": "Segments along the beam.",
+          "default": 24
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_lightning": {
+      "type": "object",
+      "description": "Branching lightning bolts.",
+      "properties": {
+        "type": {
+          "enum": [
+            "lightning"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "to": {
+          "$ref": "#/definitions/attach",
+          "description": "End point. Defaults to the target; without one bolts strike random points within `radius`."
+        },
+        "radius": {
+          "$ref": "#/definitions/number",
+          "description": "Strike radius when there is no end point.",
+          "default": 3
+        },
+        "bolts": {
+          "type": "integer",
+          "description": "Bolts alive at once.",
+          "default": 1
+        },
+        "rate": {
+          "$ref": "#/definitions/number",
+          "description": "Re-strikes per second.",
+          "default": 12
+        },
+        "jagged": {
+          "type": "number",
+          "description": "How far bolts zig-zag, as a fraction of length.",
+          "default": 0.25
+        },
+        "branches": {
+          "type": "integer",
+          "description": "Side branches per bolt.",
+          "default": 3
+        },
+        "detail": {
+          "type": "integer",
+          "description": "Subdivision depth; each level doubles the kinks.",
+          "default": 5
+        },
+        "width": {
+          "$ref": "#/definitions/number",
+          "description": "Width in blocks. `t` runs along the bolt.",
+          "default": 0.08
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Glow colour.",
+          "default": "#9fd8ff"
+        },
+        "core_color": {
+          "$ref": "#/definitions/color",
+          "description": "Core colour.",
+          "default": "#ffffff"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_ring": {
+      "type": "object",
+      "description": "An expanding ring or shockwave.",
+      "properties": {
+        "type": {
+          "enum": [
+            "ring"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "radius": {
+          "$ref": "#/definitions/number",
+          "description": "Radius in blocks.",
+          "default": 2
+        },
+        "width": {
+          "$ref": "#/definitions/number",
+          "description": "Ring thickness in blocks.",
+          "default": 0.4
+        },
+        "height": {
+          "$ref": "#/definitions/number",
+          "description": "Wall height in blocks. 0 makes a flat ring.",
+          "default": 0
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour over the track.",
+          "default": "#ffffff"
+        },
+        "face": {
+          "enum": [
+            "up",
+            "camera",
+            "forward"
+          ],
+          "description": "`up` lies flat in the track's frame, `camera` faces the viewer, `forward` faces the frame's forward axis.",
+          "default": "up"
+        },
+        "segments": {
+          "type": "integer",
+          "description": "Segments around the ring.",
+          "default": 64
+        },
+        "twist": {
+          "$ref": "#/definitions/number",
+          "description": "Texture rotation speed in turns per second.",
+          "default": 0
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_mesh": {
+      "type": "object",
+      "description": "A primitive or model drawn with a material.",
+      "properties": {
+        "type": {
+          "enum": [
+            "mesh"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "mesh": {
+          "type": "string",
+          "description": "`sphere`, `cube`, `cylinder`, `cone`, `torus`, `plane`, or an OBJ model id such as `mymod:models/fx/horn.obj`.",
+          "default": "sphere"
+        },
+        "scale": {
+          "$ref": "#/definitions/vector",
+          "description": "Size in blocks along each axis.",
+          "default": [
+            1,
+            1,
+            1
+          ]
+        },
+        "rotation": {
+          "$ref": "#/definitions/vector",
+          "description": "Rotation in degrees.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "spin": {
+          "$ref": "#/definitions/vector",
+          "description": "Rotation speed in degrees per second.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour over the track.",
+          "default": "#ffffff"
+        },
+        "detail": {
+          "type": "integer",
+          "description": "Segments for round primitives.",
+          "default": 24
+        },
+        "reveal": {
+          "$ref": "#/definitions/mesh_reveal",
+          "description": "Grow the mesh into view along an axis."
+        },
+        "displace": {
+          "$ref": "#/definitions/mesh_displace",
+          "description": "Organic movement: the surface swells and ripples along its normals."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_decal": {
+      "type": "object",
+      "description": "A texture projected onto the world.",
+      "properties": {
+        "type": {
+          "enum": [
+            "decal"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "size": {
+          "$ref": "#/definitions/number",
+          "description": "Width and length in blocks.",
+          "default": 2
+        },
+        "depth": {
+          "$ref": "#/definitions/number",
+          "description": "How far the projection reaches up and down, in blocks.",
+          "default": 1.5
+        },
+        "rotation": {
+          "$ref": "#/definitions/number",
+          "description": "Rotation around the projection axis, in degrees.",
+          "default": 0
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour over the track.",
+          "default": "#ffffff"
+        },
+        "project": {
+          "enum": [
+            "down",
+            "forward"
+          ],
+          "description": "Projection direction: straight down, or along the frame's forward axis (onto walls).",
+          "default": "down"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_model": {
+      "type": "object",
+      "description": "Re-renders an entity's own model with an effect material.",
+      "properties": {
+        "type": {
+          "enum": [
+            "model"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "model": {
+          "enum": [
+            "self",
+            "target"
+          ],
+          "description": "Whose model to draw.",
+          "default": "self"
+        },
+        "hide_original": {
+          "type": "boolean",
+          "description": "Hide the entity's normal rendering while the track runs.",
+          "default": false
+        },
+        "shadow": {
+          "type": "boolean",
+          "description": "Keep the hidden entity's shadow, on the ground and in a shaderpack's shadows. Turn it off when the copy moves away from the entity, such as halves falling apart; `shatter` always leaves it off.",
+          "default": true
+        },
+        "snapshot": {
+          "type": "boolean",
+          "description": "Freeze the pose at the track start. The copy outlives the entity.",
+          "default": false
+        },
+        "offset": {
+          "$ref": "#/definitions/vector",
+          "description": "Offset of the copy, in the entity's frame.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "scale": {
+          "$ref": "#/definitions/number",
+          "description": "Scale of the copy around the entity's feet.",
+          "default": 1
+        },
+        "inflate": {
+          "$ref": "#/definitions/number",
+          "description": "Push the surface out along its normals, in blocks.",
+          "default": 0
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Tint over everything.",
+          "default": "#ffffff"
+        },
+        "mask": {
+          "$ref": "#/definitions/model_mask",
+          "description": "The travelling front."
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model_layer"
+          },
+          "description": "Surfaces behind the front, nearest first. Defaults to the entity's own texture."
+        },
+        "edge": {
+          "$ref": "#/definitions/model_edge",
+          "description": "A glowing rim along the front."
+        },
+        "afterimages": {
+          "$ref": "#/definitions/model_afterimages",
+          "description": "Copies left behind as the entity moves."
+        },
+        "deform": {
+          "$ref": "#/definitions/model_deform",
+          "description": "Swelling, bulging, ripples and melting."
+        },
+        "slice": {
+          "$ref": "#/definitions/model_slice",
+          "description": "Cut the model in two along a plane."
+        },
+        "shatter": {
+          "$ref": "#/definitions/model_shatter",
+          "description": "Break the model into flying chunks."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_screen": {
+      "type": "object",
+      "description": "Full-screen effects.",
+      "properties": {
+        "type": {
+          "enum": [
+            "screen"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "shake": {
+          "$ref": "#/definitions/number",
+          "description": "Camera shake strength. 1 is a heavy hit.",
+          "default": 0
+        },
+        "shake_speed": {
+          "$ref": "#/definitions/number",
+          "description": "Shake frequency.",
+          "default": 18
+        },
+        "flash": {
+          "$ref": "#/definitions/number",
+          "description": "Flash strength, 0..1.",
+          "default": 0
+        },
+        "flash_color": {
+          "$ref": "#/definitions/color",
+          "description": "Flash colour.",
+          "default": "#ffffff"
+        },
+        "chromatic": {
+          "$ref": "#/definitions/number",
+          "description": "Chromatic split strength.",
+          "default": 0
+        },
+        "vignette": {
+          "$ref": "#/definitions/number",
+          "description": "Vignette strength, 0..1.",
+          "default": 0
+        },
+        "vignette_color": {
+          "$ref": "#/definitions/color",
+          "description": "Vignette colour.",
+          "default": "#000000"
+        },
+        "impact": {
+          "$ref": "#/definitions/number",
+          "description": "Black-and-white manga impact frame, 0..1: hard ink threshold with radial speed lines.",
+          "default": 0
+        },
+        "impact_invert": {
+          "type": "boolean",
+          "description": "Invert the impact frame.",
+          "default": false
+        },
+        "lines": {
+          "$ref": "#/definitions/number",
+          "description": "Radial speed lines toward the anchor, 0..1.",
+          "default": 0
+        },
+        "desaturate": {
+          "$ref": "#/definitions/number",
+          "description": "Drain colour, 0..1. Time-stop looks.",
+          "default": 0
+        },
+        "tint": {
+          "$ref": "#/definitions/color",
+          "description": "Colour multiplied over the image.",
+          "default": "#ffffff"
+        },
+        "invert": {
+          "$ref": "#/definitions/number",
+          "description": "Invert colours, 0..1.",
+          "default": 0
+        },
+        "warp": {
+          "$ref": "#/definitions/number",
+          "description": "Lens warp around the anchor on screen: positive bulges, negative pinches.",
+          "default": 0
+        },
+        "radius": {
+          "$ref": "#/definitions/number",
+          "description": "Limit colour effects to a sphere of this radius around the track, in blocks. 0 means the whole screen.",
+          "default": 0
+        },
+        "edge": {
+          "$ref": "#/definitions/number",
+          "description": "Softness of the sphere's edge, in blocks.",
+          "default": 0.6
+        },
+        "edge_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of a glowing band at the sphere's edge.",
+          "default": "#00000000"
+        },
+        "range": {
+          "type": "number",
+          "description": "Viewers farther than this from the track feel nothing; strength fades with distance.",
+          "default": 48
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "track_effect": {
+      "type": "object",
+      "description": "Plays another effect as a sub-timeline.",
+      "properties": {
+        "type": {
+          "enum": [
+            "effect"
+          ],
+          "description": "Track type."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name, used in error messages."
+        },
+        "start": {
+          "type": "number",
+          "description": "When the track starts, in seconds.",
+          "default": 0
+        },
+        "end": {
+          "type": "number",
+          "description": "When the track ends, in seconds. Defaults to the end of the effect; looping effects run forever.",
+          "default": -1
+        },
+        "at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the track sits."
+        },
+        "material": {
+          "$ref": "#/definitions/material",
+          "description": "How the track is shaded."
+        },
+        "effect": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "The effect to play."
+        },
+        "params": {
+          "$ref": "#/definitions/param_overrides",
+          "description": "Param overrides for the child: name to number, expression or colour."
+        },
+        "scale": {
+          "$ref": "#/definitions/number",
+          "description": "Scale relative to this effect.",
+          "default": 1
+        },
+        "every": {
+          "type": "number",
+          "description": "Replay every this many seconds while the track runs.",
+          "default": 0
+        }
+      },
+      "required": [
+        "type",
+        "effect"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "emitter": {
+      "type": "object",
+      "description": "When and where particles are born.",
+      "properties": {
+        "rate": {
+          "$ref": "#/definitions/number",
+          "description": "Particles per second. Animatable over the track.",
+          "default": 0
+        },
+        "burst": {
+          "$ref": "#/definitions/burst",
+          "description": "Particles spawned at once: a count at the track start, or [[time, count], ...] in track seconds."
+        },
+        "per_block": {
+          "$ref": "#/definitions/number",
+          "description": "Particles per block the emitter moves.",
+          "default": 0
+        },
+        "max": {
+          "type": "integer",
+          "description": "Most particles alive at once: up to 20000 on the CPU and 262144 on the GPU.",
+          "default": 2000
+        },
+        "simulation": {
+          "enum": [
+            "auto",
+            "cpu",
+            "gpu"
+          ],
+          "description": "`cpu` supports everything. `gpu` simulates on the graphics card for very large counts, without collisions, trails or particle-spawned effects; alpha-blended GPU particles are not sorted, and values over a particle's life come from a lookup table. `auto` uses the GPU for tracks of 1500 or more additive particles that need nothing the GPU lacks, and the CPU otherwise.",
+          "default": "auto"
+        },
+        "space": {
+          "enum": [
+            "world",
+            "local"
+          ],
+          "description": "`world`: particles stay where they spawn. `local`: they move with the emitter.",
+          "default": "world"
+        },
+        "shape": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/shape_point"
+            },
+            {
+              "$ref": "#/definitions/shape_sphere"
+            },
+            {
+              "$ref": "#/definitions/shape_box"
+            },
+            {
+              "$ref": "#/definitions/shape_disc"
+            },
+            {
+              "$ref": "#/definitions/shape_cone"
+            },
+            {
+              "$ref": "#/definitions/shape_line"
+            },
+            {
+              "$ref": "#/definitions/shape_surface"
+            },
+            {
+              "$ref": "#/definitions/shape_bones"
+            },
+            {
+              "$ref": "#/definitions/shape_aabb"
+            }
+          ],
+          "description": "Where particles spawn."
+        },
+        "inherit": {
+          "$ref": "#/definitions/number",
+          "description": "Fraction of the anchor's velocity new particles take.",
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "particle": {
+      "type": "object",
+      "description": "How each particle looks and moves. `t` is its life, 0..1.",
+      "properties": {
+        "lifetime": {
+          "$ref": "#/definitions/number",
+          "description": "Seconds each particle lives.",
+          "default": 1
+        },
+        "speed": {
+          "$ref": "#/definitions/number",
+          "description": "Initial speed in blocks per second.",
+          "default": 0
+        },
+        "direction": {
+          "enum": [
+            "outward",
+            "up",
+            "forward",
+            "random",
+            "vector"
+          ],
+          "description": "Initial direction: away from the shape centre, up, along the frame's forward axis, random, or `vector`.",
+          "default": "outward"
+        },
+        "vector": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction when `direction` is `vector`.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "spread": {
+          "$ref": "#/definitions/number",
+          "description": "Random cone around the direction, in degrees.",
+          "default": 0
+        },
+        "velocity": {
+          "$ref": "#/definitions/vector",
+          "description": "Extra initial velocity in blocks/s.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "size": {
+          "$ref": "#/definitions/number",
+          "description": "Size in blocks; evaluated over the particle's life.",
+          "default": 0.1
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour over the particle's life. Values above 1 glow.",
+          "default": "#ffffff"
+        },
+        "rotation": {
+          "$ref": "#/definitions/number",
+          "description": "Initial sprite rotation in degrees.",
+          "default": 0
+        },
+        "spin": {
+          "$ref": "#/definitions/number",
+          "description": "Sprite rotation speed in degrees per second.",
+          "default": 0
+        },
+        "stretch": {
+          "$ref": "#/definitions/number",
+          "description": "Stretch the sprite along its velocity: seconds of motion it spans.",
+          "default": 0
+        },
+        "orient": {
+          "enum": [
+            "camera",
+            "flat",
+            "velocity"
+          ],
+          "description": "`camera` faces the viewer, `flat` lies on the ground, `velocity` follows motion.",
+          "default": "camera"
+        },
+        "frames": {
+          "enum": [
+            "life",
+            "random",
+            "loop"
+          ],
+          "description": "How flipbook frames are chosen: over life, one random frame, or looping at the material `fps`.",
+          "default": "life"
+        },
+        "collide": {
+          "enum": [
+            "none",
+            "bounce",
+            "stick",
+            "die"
+          ],
+          "description": "What happens when a particle hits a block.",
+          "default": "none"
+        },
+        "bounce": {
+          "type": "number",
+          "description": "Speed kept after a bounce.",
+          "default": 0.4
+        },
+        "trail": {
+          "type": "integer",
+          "description": "Leave a ribbon of this many past positions behind each particle.",
+          "default": 0
+        },
+        "trail_width": {
+          "$ref": "#/definitions/number",
+          "description": "Trail width in blocks; `t` runs from head (0) to tail (1).",
+          "default": 0.05
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "particle_spawn": {
+      "type": "object",
+      "description": "Effects that particles start, so particles can spawn particles.",
+      "properties": {
+        "death": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "Effect played where a particle dies."
+        },
+        "collide": {
+          "type": "string",
+          "pattern": "^([a-z0-9_.-]+:)?[a-z0-9_./-]+$",
+          "description": "Effect played where a particle hits a block."
+        },
+        "chance": {
+          "type": "number",
+          "description": "Chance each particle triggers it.",
+          "default": 1
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_point": {
+      "type": "object",
+      "description": "A single point.",
+      "properties": {
+        "type": {
+          "enum": [
+            "point"
+          ],
+          "description": "Shape type."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_sphere": {
+      "type": "object",
+      "description": "A ball, or its surface.",
+      "properties": {
+        "type": {
+          "enum": [
+            "sphere"
+          ],
+          "description": "Shape type."
+        },
+        "radius": {
+          "$ref": "#/definitions/number",
+          "description": "Radius in blocks.",
+          "default": 0.5
+        },
+        "surface": {
+          "type": "boolean",
+          "description": "Spawn on the surface instead of inside.",
+          "default": false
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_box": {
+      "type": "object",
+      "description": "A box, or its surface.",
+      "properties": {
+        "type": {
+          "enum": [
+            "box"
+          ],
+          "description": "Shape type."
+        },
+        "size": {
+          "$ref": "#/definitions/vector",
+          "description": "Box size in blocks.",
+          "default": [
+            1,
+            1,
+            1
+          ]
+        },
+        "surface": {
+          "type": "boolean",
+          "description": "Spawn on the surface instead of inside.",
+          "default": false
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_disc": {
+      "type": "object",
+      "description": "A flat disc on the frame's XZ plane, or its rim.",
+      "properties": {
+        "type": {
+          "enum": [
+            "disc"
+          ],
+          "description": "Shape type."
+        },
+        "radius": {
+          "$ref": "#/definitions/number",
+          "description": "Radius in blocks.",
+          "default": 0.5
+        },
+        "inner": {
+          "$ref": "#/definitions/number",
+          "description": "Inner radius for discs, 0..1 of the radius.",
+          "default": 0
+        },
+        "surface": {
+          "type": "boolean",
+          "description": "Spawn on the surface instead of inside.",
+          "default": false
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_cone": {
+      "type": "object",
+      "description": "Directions inside a cone along the frame's forward axis; particles start at its tip.",
+      "properties": {
+        "type": {
+          "enum": [
+            "cone"
+          ],
+          "description": "Shape type."
+        },
+        "angle": {
+          "$ref": "#/definitions/number",
+          "description": "Cone half-angle in degrees.",
+          "default": 30
+        },
+        "radius": {
+          "$ref": "#/definitions/number",
+          "description": "Radius in blocks.",
+          "default": 0.5
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_line": {
+      "type": "object",
+      "description": "Along a line to `to`, or `length` blocks forward.",
+      "properties": {
+        "type": {
+          "enum": [
+            "line"
+          ],
+          "description": "Shape type."
+        },
+        "to": {
+          "$ref": "#/definitions/attach",
+          "description": "Line end point."
+        },
+        "length": {
+          "$ref": "#/definitions/number",
+          "description": "Line length in blocks when there is no `to`.",
+          "default": 1
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_surface": {
+      "type": "object",
+      "description": "On the anchored entity's model surface. Particles take the texture colour there.",
+      "properties": {
+        "type": {
+          "enum": [
+            "surface"
+          ],
+          "description": "Shape type."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_bones": {
+      "type": "object",
+      "description": "Along the anchored entity's skeleton.",
+      "properties": {
+        "type": {
+          "enum": [
+            "bones"
+          ],
+          "description": "Shape type."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "shape_aabb": {
+      "type": "object",
+      "description": "Inside the anchored entity's bounding box.",
+      "properties": {
+        "type": {
+          "enum": [
+            "aabb"
+          ],
+          "description": "Shape type."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "force_gravity": {
+      "type": "object",
+      "description": "Pulls down at `strength` blocks/s².",
+      "properties": {
+        "type": {
+          "enum": [
+            "gravity"
+          ],
+          "description": "Force type."
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Force strength.",
+          "default": 1
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "force_drag": {
+      "type": "object",
+      "description": "Slows particles; `strength` is the fraction of speed lost per second.",
+      "properties": {
+        "type": {
+          "enum": [
+            "drag"
+          ],
+          "description": "Force type."
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Force strength.",
+          "default": 1
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "force_wind": {
+      "type": "object",
+      "description": "Pushes along `vector` (blocks/s²).",
+      "properties": {
+        "type": {
+          "enum": [
+            "wind"
+          ],
+          "description": "Force type."
+        },
+        "vector": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction or axis.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Force strength.",
+          "default": 1
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "force_vortex": {
+      "type": "object",
+      "description": "Spins around `vector` through `center`.",
+      "properties": {
+        "type": {
+          "enum": [
+            "vortex"
+          ],
+          "description": "Force type."
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Force strength.",
+          "default": 1
+        },
+        "vector": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction or axis.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "center": {
+          "$ref": "#/definitions/vector",
+          "description": "Centre, relative to the track's frame.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "force_attractor": {
+      "type": "object",
+      "description": "Pulls toward `center` (or the target). Negative strength repels.",
+      "properties": {
+        "type": {
+          "enum": [
+            "attractor"
+          ],
+          "description": "Force type."
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Force strength.",
+          "default": 1
+        },
+        "center": {
+          "$ref": "#/definitions/vector",
+          "description": "Centre, relative to the track's frame.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        },
+        "radius": {
+          "$ref": "#/definitions/number",
+          "description": "Range; particles closer than this to an attractor die.",
+          "default": 0
+        },
+        "target": {
+          "type": "boolean",
+          "description": "Use the effect's target as the centre.",
+          "default": false
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "force_curl": {
+      "type": "object",
+      "description": "Smooth swirling turbulence from curl noise.",
+      "properties": {
+        "type": {
+          "enum": [
+            "curl"
+          ],
+          "description": "Force type."
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Force strength.",
+          "default": 1
+        },
+        "scale": {
+          "$ref": "#/definitions/number",
+          "description": "Noise frequency.",
+          "default": 1
+        },
+        "speed": {
+          "$ref": "#/definitions/number",
+          "description": "How fast the noise field changes.",
+          "default": 0.5
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "force_orbit": {
+      "type": "object",
+      "description": "Keeps particles circling `center` at their current radius.",
+      "properties": {
+        "type": {
+          "enum": [
+            "orbit"
+          ],
+          "description": "Force type."
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Force strength.",
+          "default": 1
+        },
+        "vector": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction or axis.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "center": {
+          "$ref": "#/definitions/vector",
+          "description": "Centre, relative to the track's frame.",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_mask": {
+      "type": "object",
+      "description": "A front that travels across the model.",
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "point",
+            "plane",
+            "bones",
+            "noise"
+          ],
+          "description": "`point` measures distance from `origin`, `plane` along `axis`, `bones` along the skeleton from `root`, `noise` is a pure dissolve, `none` shows everything.",
+          "default": "none"
+        },
+        "origin": {
+          "$ref": "#/definitions/attach",
+          "description": "Mask origin for `point` and `plane`."
+        },
+        "axis": {
+          "$ref": "#/definitions/vector",
+          "description": "Sweep direction for `plane`, in the entity's frame.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "root": {
+          "type": "string",
+          "description": "Bone the `bones` mode starts from; falls back to the model root.",
+          "default": "body"
+        },
+        "progress": {
+          "$ref": "#/definitions/number",
+          "description": "How far the front has travelled, in blocks. Animate it, for example with a curve over the track.",
+          "default": 0
+        },
+        "noise": {
+          "type": "number",
+          "description": "How ragged the front is, in blocks.",
+          "default": 0.12
+        },
+        "noise_scale": {
+          "type": "number",
+          "description": "Frequency of the ragged edge.",
+          "default": 5
+        },
+        "invert": {
+          "type": "boolean",
+          "description": "Show what the front has not reached instead: growth becomes disintegration.",
+          "default": false
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_layer": {
+      "type": "object",
+      "description": "A surface shown behind the mask front.",
+      "properties": {
+        "width": {
+          "$ref": "#/definitions/number",
+          "description": "How far behind the front this layer lasts, in blocks. The last layer lasts forever.",
+          "default": 0
+        },
+        "texture": {
+          "type": "string",
+          "description": "`entity` for the model's own texture, or a texture id that tiles across the model.",
+          "default": "entity"
+        },
+        "tiling": {
+          "type": "number",
+          "description": "How many times a tiling texture repeats per model texture.",
+          "default": 4
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Tint.",
+          "default": "#ffffff"
+        },
+        "glow": {
+          "$ref": "#/definitions/number",
+          "description": "Bloom strength.",
+          "default": 0
+        },
+        "shine": {
+          "$ref": "#/definitions/number",
+          "description": "Scales the material's specular highlight on this layer: 0 for dry skin, 1 or more for wet tissue.",
+          "default": 1
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_edge": {
+      "type": "object",
+      "description": "A glowing rim along the mask front.",
+      "properties": {
+        "width": {
+          "type": "number",
+          "description": "Width of the glowing rim at the front, in blocks.",
+          "default": 0.06
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Rim colour.",
+          "default": "#ff6a2a"
+        },
+        "glow": {
+          "$ref": "#/definitions/number",
+          "description": "Rim bloom strength.",
+          "default": 1.5
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_afterimages": {
+      "type": "object",
+      "description": "Frozen copies left behind as the entity moves.",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Copies left behind.",
+          "default": 4
+        },
+        "interval": {
+          "type": "number",
+          "description": "Seconds between copies.",
+          "default": 0.06
+        },
+        "life": {
+          "type": "number",
+          "description": "Seconds each copy lasts while it fades.",
+          "default": 0.3
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_deform": {
+      "type": "object",
+      "description": "Bends the model's surface on the graphics card: swelling, a bulge around a bone, ripples, melting.",
+      "properties": {
+        "swell": {
+          "$ref": "#/definitions/number",
+          "description": "Pushes the whole surface out along its normals, in blocks.",
+          "default": 0
+        },
+        "bulge_at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the bulge swells from; give it a bone such as `right_arm:center` for a flexing muscle or growth."
+        },
+        "bulge": {
+          "$ref": "#/definitions/number",
+          "description": "How far the surface around `bulge_at` swells, in blocks.",
+          "default": 0
+        },
+        "bulge_radius": {
+          "$ref": "#/definitions/number",
+          "description": "Reach of the bulge, in blocks.",
+          "default": 0.35
+        },
+        "ripple": {
+          "$ref": "#/definitions/number",
+          "description": "Height of waves running over the surface, in blocks.",
+          "default": 0
+        },
+        "ripple_size": {
+          "$ref": "#/definitions/number",
+          "description": "Distance between ripple crests, in blocks.",
+          "default": 0.4
+        },
+        "ripple_speed": {
+          "$ref": "#/definitions/number",
+          "description": "How fast the ripples travel.",
+          "default": 3
+        },
+        "melt": {
+          "$ref": "#/definitions/number",
+          "description": "0..1: the model sags toward the ground and spreads into a puddle; unevenly, so it drips.",
+          "default": 0
+        },
+        "spread": {
+          "$ref": "#/definitions/number",
+          "description": "How wide a melting model spreads at the bottom.",
+          "default": 0.6
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_slice": {
+      "type": "object",
+      "description": "Cuts the model in two along a plane; the halves can part, tip and fall.",
+      "properties": {
+        "origin": {
+          "$ref": "#/definitions/vector",
+          "description": "A point on the cut, in blocks from the entity's feet, in its frame.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "normal": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction the cut faces, in the entity's frame: [1, 0, 0] splits left from right, [0, 1, 0] top from bottom.",
+          "default": [
+            1,
+            0.2,
+            0
+          ]
+        },
+        "gap": {
+          "$ref": "#/definitions/number",
+          "description": "How far apart the halves move, in blocks.",
+          "default": 0
+        },
+        "tilt": {
+          "$ref": "#/definitions/number",
+          "description": "Degrees each half tips away from the cut.",
+          "default": 0
+        },
+        "drop": {
+          "$ref": "#/definitions/number",
+          "description": "How far the half on the `normal` side slides down, in blocks.",
+          "default": 0
+        },
+        "cap_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the inside where the model is cut open; values above 1 glow.",
+          "default": "#b0141a"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_shatter": {
+      "type": "object",
+      "description": "Freezes the model and breaks it into chunks that burst apart, tumble and fall.",
+      "properties": {
+        "pieces": {
+          "type": "integer",
+          "description": "How many chunks, up to 64.",
+          "default": 24
+        },
+        "size": {
+          "type": "number",
+          "description": "Faces are cut into squares this many blocks wide before chunking, so chunks have ragged edges.",
+          "default": 0.125
+        },
+        "origin": {
+          "$ref": "#/definitions/vector",
+          "description": "Centre of the burst, in blocks from the entity's feet, in its frame.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "time": {
+          "$ref": "#/definitions/number",
+          "description": "Seconds since the model broke; chunks fly while it rises. Hold it to freeze the burst.",
+          "default": "age"
+        },
+        "force": {
+          "$ref": "#/definitions/number",
+          "description": "Outward speed, in blocks per second.",
+          "default": 3
+        },
+        "lift": {
+          "$ref": "#/definitions/number",
+          "description": "Extra upward speed, in blocks per second.",
+          "default": 2
+        },
+        "spin": {
+          "$ref": "#/definitions/number",
+          "description": "Tumbling speed, in degrees per second.",
+          "default": 360
+        },
+        "gravity": {
+          "$ref": "#/definitions/number",
+          "description": "Pull down, in blocks per second squared.",
+          "default": 12
+        },
+        "inner_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the chunks' insides.",
+          "default": "#3a0a0a"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "material_noise": {
+      "type": "object",
+      "description": "Animated noise on the material.",
+      "properties": {
+        "scale": {
+          "$ref": "#/definitions/number",
+          "description": "Noise frequency across the texture.",
+          "default": 2
+        },
+        "scroll": {
+          "$ref": "#/definitions/vector",
+          "description": "Noise scroll speed as [u, v] per second.",
+          "default": [
+            0,
+            -0.5,
+            0
+          ]
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "How much the noise breaks up the alpha.",
+          "default": 0.5
+        },
+        "distort": {
+          "$ref": "#/definitions/number",
+          "description": "How much the noise warps the texture lookup.",
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "material_dissolve": {
+      "type": "object",
+      "description": "Erodes the material through noise.",
+      "properties": {
+        "amount": {
+          "$ref": "#/definitions/number",
+          "description": "0 is whole, 1 is gone. Animate it with a curve or `t`.",
+          "default": 0
+        },
+        "edge": {
+          "$ref": "#/definitions/number",
+          "description": "Width of the burning edge.",
+          "default": 0.08
+        },
+        "edge_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the burning edge; values above 1 glow.",
+          "default": "#ff7a1a"
+        },
+        "scale": {
+          "$ref": "#/definitions/number",
+          "description": "Noise frequency.",
+          "default": 3
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "material_fresnel": {
+      "type": "object",
+      "description": "Brightens or fades surfaces seen edge-on.",
+      "properties": {
+        "power": {
+          "$ref": "#/definitions/number",
+          "description": "Sharpness of the rim.",
+          "default": 3
+        },
+        "strength": {
+          "$ref": "#/definitions/number",
+          "description": "Brightness of the rim.",
+          "default": 1
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "description": "Rim colour.",
+          "default": "#ffffff"
+        },
+        "fade": {
+          "type": "boolean",
+          "description": "Fade the centre out instead of adding a rim (hologram look).",
+          "default": false
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "material_shading": {
+      "type": "object",
+      "description": "Studio lighting computed per pixel from the surface's normals: diffuse, subsurface scattering, a specular highlight and relief from the texture.",
+      "properties": {
+        "diffuse": {
+          "$ref": "#/definitions/number",
+          "description": "How strongly the key light shapes the surface.",
+          "default": 1
+        },
+        "ambient": {
+          "$ref": "#/definitions/number",
+          "description": "Light reaching the side facing away.",
+          "default": 0.35
+        },
+        "specular": {
+          "$ref": "#/definitions/number",
+          "description": "Brightness of the wet highlight. Above 1 the highlight glows.",
+          "default": 0.4
+        },
+        "gloss": {
+          "$ref": "#/definitions/number",
+          "description": "Sharpness of the highlight: low is satin, high is wet.",
+          "default": 40
+        },
+        "subsurface": {
+          "$ref": "#/definitions/number",
+          "description": "Light scattering through the surface, 0..1: wraps light round the dark side and glows at the rim, like flesh, wax or leaves.",
+          "default": 0
+        },
+        "subsurface_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the scattered light.",
+          "default": "#ff4a2a"
+        },
+        "bump": {
+          "$ref": "#/definitions/number",
+          "description": "Surface relief taken from the texture's brightness, so fibres, pores and veins catch the light.",
+          "default": 0
+        },
+        "light": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction the key light comes from, in world axes.",
+          "default": [
+            0.4,
+            0.85,
+            0.35
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "mesh_reveal": {
+      "type": "object",
+      "description": "Grows the mesh into view along an axis behind a glowing front.",
+      "properties": {
+        "axis": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction the mesh grows along, in its own axes.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "progress": {
+          "$ref": "#/definitions/number",
+          "description": "How much of the mesh is shown, 0..1 from one end to the other along `axis`.",
+          "default": 1
+        },
+        "edge": {
+          "$ref": "#/definitions/number",
+          "description": "Width of the glowing growth front in blocks.",
+          "default": 0.03
+        },
+        "edge_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the growth front; values above 1 glow.",
+          "default": "#ffffff"
+        },
+        "noise": {
+          "$ref": "#/definitions/number",
+          "description": "Raggedness of the front in blocks.",
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "mesh_displace": {
+      "type": "object",
+      "description": "Moves the surface in and out along its normals with noise.",
+      "properties": {
+        "amount": {
+          "$ref": "#/definitions/number",
+          "description": "How far the surface moves, in blocks.",
+          "default": 0.02
+        },
+        "scale": {
+          "$ref": "#/definitions/number",
+          "description": "Size of the ripples: larger is finer.",
+          "default": 6
+        },
+        "speed": {
+          "$ref": "#/definitions/number",
+          "description": "How fast the ripples move.",
+          "default": 1
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "number": {
+      "description": "A number: a constant, a random range [min, max], an expression string, or a curve.",
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "description": "An expression such as \"radius * 2 + sin(time * 4)\"."
+        },
+        {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/number"
+          },
+          "description": "A random value between min and max, picked once per particle or instance."
+        },
+        {
+          "$ref": "#/definitions/curve"
+        }
+      ]
+    },
+    "curve": {
+      "type": "object",
+      "description": "Keyframes [time, value] or [time, value, easing].",
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 3
+          }
+        },
+        "ease": {
+          "$ref": "#/definitions/easing"
+        },
+        "over": {
+          "enum": [
+            "t",
+            "life",
+            "time",
+            "age"
+          ],
+          "description": "What drives the curve: t (0..1 over the track or particle life), time (effect seconds) or age (seconds since start)."
+        }
+      },
+      "required": [
+        "keys"
+      ],
+      "additionalProperties": false
+    },
+    "easing": {
+      "enum": [
+        "linear",
+        "step",
+        "in_sine",
+        "out_sine",
+        "in_out_sine",
+        "in_quad",
+        "out_quad",
+        "in_out_quad",
+        "in_cubic",
+        "out_cubic",
+        "in_out_cubic",
+        "in_quart",
+        "out_quart",
+        "in_out_quart",
+        "in_expo",
+        "out_expo",
+        "in_out_expo",
+        "in_circ",
+        "out_circ",
+        "in_out_circ",
+        "in_back",
+        "out_back",
+        "in_out_back",
+        "in_elastic",
+        "out_elastic",
+        "in_out_elastic",
+        "in_bounce",
+        "out_bounce",
+        "in_out_bounce"
+      ],
+      "description": "An easing curve."
+    },
+    "vector": {
+      "description": "[x, y, z] with any number form per component, a single number for all three, or a curve with [time, [x, y, z]] keys.",
+      "anyOf": [
+        {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/definitions/number"
+          }
+        },
+        {
+          "$ref": "#/definitions/number"
+        },
+        {
+          "$ref": "#/definitions/curve"
+        }
+      ]
+    },
+    "color": {
+      "description": "\"#rrggbb\", \"#rrggbbaa\", [r, g, b, a] (values above 1 glow), \"$param\", or a gradient.",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/definitions/number"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "gradient": {
+              "type": "array"
+            },
+            "keys": {
+              "type": "array"
+            },
+            "over": {
+              "enum": [
+                "t",
+                "life",
+                "time",
+                "age"
+              ]
+            },
+            "ease": {
+              "$ref": "#/definitions/easing"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "attach": {
+      "anyOf": [
+        {
+          "enum": [
+            "self",
+            "target"
+          ]
+        },
+        {
+          "$ref": "#/definitions/attach_object"
+        }
+      ]
+    },
+    "material": {
+      "description": "A material id such as \"mymod:fire\", or an inline material.",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/material_object"
+        }
+      ]
+    },
+    "params": {
+      "type": "object",
+      "description": "Param names with their defaults.",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "param_overrides": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/number"
+      }
+    },
+    "uniforms": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/number"
+      }
+    },
+    "bones": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ],
+      "description": "Bone name, optionally with :tip or :center, or a list to try in order."
+    },
+    "burst": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      ]
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

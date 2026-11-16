@@ -24,6 +24,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Fetch the latest schema
+        run: |
+          curl -sfL https://raw.githubusercontent.com/xaylis/Kinesis/main/schema/effect.schema.json -o schema/effect.schema.json.new \
+            && mv schema/effect.schema.json.new schema/effect.schema.json || echo "Using the bundled schema"
+          curl -sfL https://raw.githubusercontent.com/xaylis/Kinesis/main/schema/material.schema.json -o schema/material.schema.json.new \
+            && mv schema/material.schema.json.new schema/material.schema.json || true
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
