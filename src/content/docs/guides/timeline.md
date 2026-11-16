@@ -42,6 +42,13 @@ Offsets are in blocks, in the anchor's frame: x to the right, y up, z forward. `
 body, its head (where it looks), the world axes, the camera, or `bone`, which turns with the bone it is attached to as
 the model animates. With `bone`, y runs along the bone toward its parent, so an arm's y points up the arm to the
 shoulder. `follow: false` leaves the track where it started.
+
+On GeckoLib models, `bone` names are the geo file's bones, and its locators work as bone names too, so a trail can
+follow the tip of an animated blade:
+
+```json
+{ "type": "trail", "at": { "bone": "blade_tip" }, "length": 0.35, "width": 0.3 }
+```
 `"at": "target"` uses the second anchor set with `.to(...)`.
 
 ## Params

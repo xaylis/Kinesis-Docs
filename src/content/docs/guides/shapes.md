@@ -50,7 +50,7 @@ A `mesh` draws `sphere`, `cube`, `cylinder`, `cone`, `torus` or `plane`, or an O
 Meshes are uploaded to the graphics card once and placed with a matrix every frame, so a detailed model costs about as
 much as a cube.
 
-`reveal` grows a mesh into view along an axis behind a glowing front, the way the regen skeleton grows bone by bone:
+`reveal` grows a mesh into view along an axis behind a glowing front, like a crystal pushing out of the ground:
 
 ```json
 "reveal": { "axis": [0, -1, 0], "progress": "smoothstep(0, 0.6, age)", "edge": 0.05, "edge_color": [3.2, 1.6, 0.9, 1], "noise": 0.03 }
