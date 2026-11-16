@@ -1302,8 +1302,16 @@
         },
         "max": {
           "type": "integer",
-          "description": "Most particles alive at once.",
+          "description": "Most particles alive at once: up to 20000 on the CPU and 262144 on the GPU.",
           "default": 2000
+        },
+        "simulation": {
+          "enum": [
+            "cpu",
+            "gpu"
+          ],
+          "description": "`cpu` supports everything. `gpu` simulates on the graphics card for very large counts, without collisions, trails or particle-spawned effects; alpha-blended GPU particles are not sorted, and values over a particle's life come from a lookup table.",
+          "default": "cpu"
         },
         "space": {
           "enum": [

@@ -62,7 +62,33 @@ as a splash.
 Each particle that dies has a 40% chance to start `mymod:spark_split` where it died. That effect can have its own
 particles, which can spawn more. Kinesis caps how many sub-effects can start each frame, so chains can't run away.
 
+## GPU particles
+
+For very large counts, simulate on the graphics card:
+
+```json
+"emitter": { "simulation": "gpu", "max": 131072, "rate": 24000, "shape": { "type": "disc", "radius": 5 } }
+```
+
+Spawning still runs on the CPU, so every shape works, `surface` and `bones` included. After that the card ages and
+moves the particles and draws them in one call. `kinesis:nebula` keeps around 100,000 particles in the air.
+
+A CPU track holds up to 20,000 particles; a GPU track holds up to 262,144. When a GPU track is full, the oldest particle
+makes room for the new one.
+
+Most of a CPU track carries over. A few things don't:
+
+- No `collide`, `trail` or `spawn`. Kinesis reports these as errors so they are never silently ignored.
+- Up to 8 forces. `gravity`, `drag` and `wind` are free; `vortex`, `orbit`, `attractor` and `curl` each count once.
+- `size`, `stretch` and `color` are read from a small table over life (`t`) and 16 steps of `rand`, rebuilt every
+  frame, so they can still follow params and time. Curves `over` the particle's `age` use its average lifetime.
+- Alpha-blended GPU particles are not sorted back to front. Additive particles, the default, look the same either way.
+- Materials work as they do on the CPU, apart from custom `shader` programs.
+
+If the graphics driver can't run the simulation, the track falls back to the CPU and is capped at 20,000.
+
 ## The same on every client
 
 Particles are simulated at a fixed 60 Hz. Every random choice comes from the effect seed and the particle's spawn
-number, so all players see the same particles in the same places, whatever their frame rate.
+number, so all players see the same particles in the same places, whatever their frame rate. GPU particles spawn the
+same way; their motion can differ by rounding between graphics cards, which is invisible at the scale they are used.
