@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    implementation fg.deobf("maven.modrinth:kinesis:0.1.0+forge-1.20.1")
+    implementation fg.deobf("maven.modrinth:kinesis:1.0.0+forge-1.20.1")
 }
 ```
 
