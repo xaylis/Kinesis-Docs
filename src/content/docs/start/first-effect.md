@@ -69,7 +69,7 @@ Kinesis.play("mymod:fire_burst", zombie);
 ```
 
 Edit the file and press F3+T to reload. Mistakes show up in chat with the file and field, such as
-`effect mymod:fire_burst: tracks[0].particle.sise: unknown field 'sise' (did you mean 'size'?)`.
+`effect mymod:fire_burst: tracks[0].particle: unknown field 'sise' in particle (did you mean 'size'?)`.
 
 ## Editor support
 

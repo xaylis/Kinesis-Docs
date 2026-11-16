@@ -16,15 +16,15 @@ runs its own bloom, heat haze and screen effects.
 
 What that means in practice:
 
-- Effects look the same with and without a pack.
+- Effects look the same with and without a pack, apart from the model copies described below.
 - Effects are hidden behind terrain and entities as you'd expect.
-- The pack doesn't light or shadow effects. Nearly all visual effects glow anyway.
+- The pack doesn't light or shadow effects, apart from those model copies. Nearly all visual effects glow anyway.
 - Bloom and heat haze come from Kinesis, not the pack, so they behave the same under any pack.
 
 ## Model copies that replace an entity
 
 A `model` track that looks like the entity itself is the exception. If it has no `mask`, no layers other than the
-entity's own texture, and no glow, fresnel, special shading or additive blending, then while a pack is in use it is
+entity's own texture, and no glow, fresnel, special shading, additive blending or custom shader, then while a pack is in use it is
 drawn as an ordinary entity, in the same batch as the world's mobs. The pack lights it, shades it and puts it in its
 shadow map, so a copy replacing a mob or player looks exactly like the original.
 

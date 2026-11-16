@@ -10,7 +10,7 @@ Everything public lives in `dev.xaylis.kinesis.api`.
 ```java
 Kinesis.play("mymod:regen", entity);          // at an entity
 Kinesis.play("mymod:shockwave", level, pos);  // at a position
-Kinesis.effect("mymod:beam")                  // a builder for overrides
+Kinesis.effect("mymod:beam")                  // a builder for overrides (also takes a ResourceLocation)
 Kinesis.stop(entity);                         // stop everything on an entity
 ```
 
@@ -49,7 +49,7 @@ EffectHandle beam = Kinesis.effect("mymod:fire_beam")
 | `stop()` | Stop spawning and let what is alive finish |
 | `kill()` | Remove at once |
 | `set(String, double)`, `setColor(String, int)` | Change a param while it runs |
-| `isAlive()` | Whether it is still running |
+| `isAlive()` | On the client, whether it is still running. On the server, whether it has not been stopped and, for an effect on an entity, the entity still exists; the server does not track an effect's duration |
 | `on(String event, Consumer<EffectEvent>)` | Listen for a timeline event (client side) |
 
 ```java

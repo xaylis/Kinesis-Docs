@@ -26,7 +26,7 @@ in `.png` are used as written. `frames` lays out a flipbook as columns and rows.
 
 Kinesis ships `soft`, `spark`, `star`, `ring`, `trail`, `beam`, `smoke` and `flame` (4x4 flipbooks), `cell`,
 `shard`, `scorch`, `rune` and `splat`, plus tiling surfaces in `kinesis:material/` (`blood`, `bone`, `muscle`,
-`stone`, `ember`, `hologram`).
+`stone`, `ember`, `hologram`, `heart`, `lung`).
 
 ## Blending
 
@@ -48,7 +48,8 @@ Kinesis ships `soft`, `spark`, `star`, `ring`, `trail`, `beam`, `smoke` and `fla
 
 ## Gradient maps
 
-`gradient` recolours the material by looking it up with `gradient_by`: brightness, alpha, life, u, v or fresnel.
+`gradient` recolours the material by looking it up with `gradient_by`: `luma` (brightness, the default), `alpha`,
+`life`, `u`, `v` or `fresnel`.
 A greyscale flame texture with a gradient becomes fire of any colour.
 
 ## Heat haze

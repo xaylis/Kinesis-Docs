@@ -82,7 +82,8 @@ makes room for the new one.
 Most of a CPU track carries over. A few things don't:
 
 - No `collide`, `trail` or `spawn`. Kinesis reports these as errors so they are never silently ignored.
-- Up to 8 forces. `gravity`, `drag` and `wind` are free; `vortex`, `orbit`, `attractor` and `curl` each count once.
+- Up to 8 forces in total. `gravity`, `drag` and `wind` cost almost nothing; `vortex`, `orbit`, `attractor` and
+  `curl` are the expensive ones.
 - `size`, `stretch` and `color` are read from a small table over life (`t`) and 16 steps of `rand`, rebuilt every
   frame, so they can still follow params and time. Curves `over` the particle's `age` use its average lifetime.
 - Alpha-blended GPU particles are not sorted back to front. Additive particles, the default, look the same either way.

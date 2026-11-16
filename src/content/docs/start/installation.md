@@ -34,7 +34,7 @@ Then declare it in `mods.toml`:
 [[dependencies.yourmod]]
 modId = "kinesis"
 mandatory = true
-versionRange = "[0.1,)"
+versionRange = "[1.0,)"
 ordering = "AFTER"
 side = "BOTH"
 ```

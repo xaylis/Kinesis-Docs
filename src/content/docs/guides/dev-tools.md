@@ -53,7 +53,7 @@ the entity on its own; your hand, the HUD and your own player are hidden while i
 | `dist=4` | Camera distance in blocks, instead of fitting the entity |
 | `ref=refs/concept.png` | An image to show at the start of every row, from the game folder, to compare against |
 | `name=fireball` | File name of the sheet |
-| `scale=`, `speed=`, `seed=`, `color=` | As for `/kinesis play`; any other key sets a param |
+| `scale=`, `speed=`, `seed=`, `color=` | As for `/kinesis play` (the seed defaults to 1); any other key sets a number param. Colour params can't be set here |
 
 ## Parameter sweeps
 

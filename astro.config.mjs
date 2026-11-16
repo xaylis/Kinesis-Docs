@@ -33,7 +33,6 @@ export default defineConfig({
 			logo: { src: './src/assets/logo.png' },
 			favicon: '/favicon.png',
 			customCss: ['./src/styles/theme.css'],
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/xaylis/Kinesis' }],
 			sidebar: [
 				{ label: 'Start here', items: [{ autogenerate: { directory: 'start' } }] },
 				{ label: 'Guides', items: [{ autogenerate: { directory: 'guides' } }] },
