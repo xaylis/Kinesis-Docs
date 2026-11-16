@@ -30,7 +30,7 @@ const tracks = Object.keys(defs).filter((k) => k.startsWith('track_'));
 for (const t of tracks) pageOf[t] = `tracks/${t.slice(6)}/`;
 for (const k of ['emitter', 'particle', 'particle_spawn']) pageOf[k] = 'tracks/particles/';
 for (const k of Object.keys(defs).filter((k) => k.startsWith('shape_') || k.startsWith('force_'))) pageOf[k] = 'tracks/particles/';
-for (const k of ['model_mask', 'model_layer', 'model_edge', 'model_afterimages']) pageOf[k] = 'tracks/model/';
+for (const k of ['model_mask', 'model_layer', 'model_edge', 'model_afterimages', 'model_deform', 'model_slice', 'model_shatter']) pageOf[k] = 'tracks/model/';
 for (const k of ['material_object', 'material_noise', 'material_dissolve', 'material_fresnel']) pageOf[k] = 'material/';
 pageOf.effect = 'effect/';
 pageOf.event = 'effect/';
@@ -99,7 +99,7 @@ page('material.md', 'Material', 'How geometry is shaded.',
 
 const trackDocs = {
 	particles: ['emitter', 'particle', 'particle_spawn'],
-	model: ['model_mask', 'model_layer', 'model_edge', 'model_afterimages'],
+	model: ['model_mask', 'model_layer', 'model_edge', 'model_afterimages', 'model_deform', 'model_slice', 'model_shatter'],
 };
 for (const t of tracks) {
 	const name = t.slice(6);

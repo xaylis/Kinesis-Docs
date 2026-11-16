@@ -1093,6 +1093,18 @@
         "afterimages": {
           "$ref": "#/definitions/model_afterimages",
           "description": "Copies left behind as the entity moves."
+        },
+        "deform": {
+          "$ref": "#/definitions/model_deform",
+          "description": "Swelling, bulging, ripples and melting."
+        },
+        "slice": {
+          "$ref": "#/definitions/model_slice",
+          "description": "Cut the model in two along a plane."
+        },
+        "shatter": {
+          "$ref": "#/definitions/model_shatter",
+          "description": "Break the model into flying chunks."
         }
       },
       "required": [
@@ -2138,6 +2150,167 @@
           "type": "number",
           "description": "Seconds each copy lasts while it fades.",
           "default": 0.3
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_deform": {
+      "type": "object",
+      "description": "Bends the model's surface on the graphics card: swelling, a bulge around a bone, ripples, melting.",
+      "properties": {
+        "swell": {
+          "$ref": "#/definitions/number",
+          "description": "Pushes the whole surface out along its normals, in blocks.",
+          "default": 0
+        },
+        "bulge_at": {
+          "$ref": "#/definitions/attach",
+          "description": "Where the bulge swells from; give it a bone such as `right_arm:center` for a flexing muscle or growth."
+        },
+        "bulge": {
+          "$ref": "#/definitions/number",
+          "description": "How far the surface around `bulge_at` swells, in blocks.",
+          "default": 0
+        },
+        "bulge_radius": {
+          "$ref": "#/definitions/number",
+          "description": "Reach of the bulge, in blocks.",
+          "default": 0.35
+        },
+        "ripple": {
+          "$ref": "#/definitions/number",
+          "description": "Height of waves running over the surface, in blocks.",
+          "default": 0
+        },
+        "ripple_size": {
+          "$ref": "#/definitions/number",
+          "description": "Distance between ripple crests, in blocks.",
+          "default": 0.4
+        },
+        "ripple_speed": {
+          "$ref": "#/definitions/number",
+          "description": "How fast the ripples travel.",
+          "default": 3
+        },
+        "melt": {
+          "$ref": "#/definitions/number",
+          "description": "0..1: the model sags toward the ground and spreads into a puddle; unevenly, so it drips.",
+          "default": 0
+        },
+        "spread": {
+          "$ref": "#/definitions/number",
+          "description": "How wide a melting model spreads at the bottom.",
+          "default": 0.6
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_slice": {
+      "type": "object",
+      "description": "Cuts the model in two along a plane; the halves can part, tip and fall.",
+      "properties": {
+        "origin": {
+          "$ref": "#/definitions/vector",
+          "description": "A point on the cut, in blocks from the entity's feet, in its frame.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "normal": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction the cut faces, in the entity's frame: [1, 0, 0] splits left from right, [0, 1, 0] top from bottom.",
+          "default": [
+            1,
+            0.2,
+            0
+          ]
+        },
+        "gap": {
+          "$ref": "#/definitions/number",
+          "description": "How far apart the halves move, in blocks.",
+          "default": 0
+        },
+        "tilt": {
+          "$ref": "#/definitions/number",
+          "description": "Degrees each half tips away from the cut.",
+          "default": 0
+        },
+        "drop": {
+          "$ref": "#/definitions/number",
+          "description": "How far the half on the `normal` side slides down, in blocks.",
+          "default": 0
+        },
+        "cap_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the inside where the model is cut open; values above 1 glow.",
+          "default": "#b0141a"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "model_shatter": {
+      "type": "object",
+      "description": "Freezes the model and breaks it into chunks that burst apart, tumble and fall.",
+      "properties": {
+        "pieces": {
+          "type": "integer",
+          "description": "How many chunks, up to 64.",
+          "default": 24
+        },
+        "size": {
+          "type": "number",
+          "description": "Faces are cut into squares this many blocks wide before chunking, so chunks have ragged edges.",
+          "default": 0.125
+        },
+        "origin": {
+          "$ref": "#/definitions/vector",
+          "description": "Centre of the burst, in blocks from the entity's feet, in its frame.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "time": {
+          "$ref": "#/definitions/number",
+          "description": "Seconds since the model broke; chunks fly while it rises. Hold it to freeze the burst.",
+          "default": "age"
+        },
+        "force": {
+          "$ref": "#/definitions/number",
+          "description": "Outward speed, in blocks per second.",
+          "default": 3
+        },
+        "lift": {
+          "$ref": "#/definitions/number",
+          "description": "Extra upward speed, in blocks per second.",
+          "default": 2
+        },
+        "spin": {
+          "$ref": "#/definitions/number",
+          "description": "Tumbling speed, in degrees per second.",
+          "default": 360
+        },
+        "gravity": {
+          "$ref": "#/definitions/number",
+          "description": "Pull down, in blocks per second squared.",
+          "default": 12
+        },
+        "inner_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the chunks' insides.",
+          "default": "#3a0a0a"
         }
       },
       "additionalProperties": false,
