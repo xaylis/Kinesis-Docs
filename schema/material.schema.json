@@ -1046,6 +1046,11 @@
           "description": "Hide the entity's normal rendering while the track runs.",
           "default": false
         },
+        "shadow": {
+          "type": "boolean",
+          "description": "Keep the hidden entity's shadow, on the ground and in a shaderpack's shadows. Turn it off when the copy moves away from the entity, such as halves falling apart; `shatter` always leaves it off.",
+          "default": true
+        },
         "snapshot": {
           "type": "boolean",
           "description": "Freeze the pose at the track start. The copy outlives the entity.",

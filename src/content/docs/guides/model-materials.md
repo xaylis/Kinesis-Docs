@@ -46,8 +46,15 @@ cut-out parts stay cut out. `edge` adds a glowing rim right at the front.
 
 ## Hiding the original
 
-`hide_original: true` stops the entity's normal rendering while the track runs, shadow included. It is how an
-effect starts from nothing (regeneration) or replaces the entity (petrification).
+`hide_original: true` stops the entity's normal rendering while the track runs. It is how an effect starts from
+nothing (regeneration) or replaces the entity (petrification).
+
+The copy is lit the way the game lights entities, light map and damage flash included, and the hidden entity keeps
+its shadow: the round one on the ground, and under a shaderpack its place in the shadow map. Set `shadow: false`
+when the copy moves away from where the entity stands, such as halves falling apart; `shatter` always leaves it out.
+
+Like the game, a copy of the camera's own entity is not drawn while the camera is inside it in first person, so
+effects on the player do not fill their screen. Copies left behind, such as afterimages, still show.
 
 ## Snapshots and afterimages
 
