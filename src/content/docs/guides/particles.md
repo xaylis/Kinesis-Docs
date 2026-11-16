@@ -64,6 +64,9 @@ particles, which can spawn more. Kinesis caps how many sub-effects can start eac
 
 ## GPU particles
 
+By default, `"simulation": "auto"` lets Kinesis choose: tracks of 1,500 or more additive particles that need nothing
+the graphics card lacks run there, and everything else runs on the CPU. Set `"cpu"` or `"gpu"` to choose yourself.
+
 For very large counts, simulate on the graphics card:
 
 ```json

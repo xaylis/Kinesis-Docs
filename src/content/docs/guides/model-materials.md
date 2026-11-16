@@ -79,14 +79,20 @@ get a hologram:
 
 `kinesis:regen` uses only general features:
 
-1. A `model` track with `hide_original` hides the evaporated mob from the start. Its `bones` mask stays at 0 for the
-   first part of the effect.
+1. A `model` track with `hide_original` hides the evaporated mob from the start. Its `bones` mask stays closed until
+   the flesh stage.
 2. A `particles` track gathers dark remnants inward with an attractor and curl noise.
-3. A single cell appears: a `mesh` sphere at `body:center`, pulsing through an expression.
+3. A single cell appears: a shaded, rippling `mesh` sphere at `body:center`.
 4. Cells divide: a `particles` track whose particles start the `kinesis:regen_split` effect when they die.
 5. Veins grow along the skeleton: a `tendrils` track with `path: bones`.
-6. Organs pulse: `mesh` spheres with fresnel, scaled by `pulse(time * 9.5, 10)` for a heartbeat.
-7. The body forms: the mask's `progress` sweeps out from the torso through blood, bone, muscle and skin.
-8. Steam rises from the surface, a ring spreads at the feet, and the original returns.
+6. The skeleton assembles: OBJ meshes for the spine, pelvis, legs, ribcage, arms and skull, each attached to its model
+   part with `align: bone` and grown in with `reveal` behind a white-hot front.
+7. Organs swell into the ribcage: a heart beating through `pulse(...)`, breathing lungs and rippling guts, all with
+   wet `shading` and subsurface scattering.
+8. The body forms: the mask's `progress` sweeps out from the torso through a film of blood, glistening muscle and
+   finally skin, closing over the organs and bones.
+9. Steam rises from the surface, a ring spreads at the feet, and the original returns.
+
+The anatomy meshes ship in the jar under `assets/kinesis/models/anatomy/`, for any effect to use.
 
 Open `assets/kinesis/kinesis/effects/regen.json` in the Kinesis jar to read it in full.

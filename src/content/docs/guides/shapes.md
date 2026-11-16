@@ -47,6 +47,24 @@ shockwave with a `distortion` material.
 A `mesh` draws `sphere`, `cube`, `cylinder`, `cone`, `torus` or `plane`, or an OBJ model by id, such as
 `mymod:models/fx/horn.obj`. `scale`, `rotation` and `spin` are vectors.
 
+Meshes are uploaded to the graphics card once and placed with a matrix every frame, so a detailed model costs about as
+much as a cube.
+
+`reveal` grows a mesh into view along an axis behind a glowing front, the way the regen skeleton grows bone by bone:
+
+```json
+"reveal": { "axis": [0, -1, 0], "progress": "smoothstep(0, 0.6, age)", "edge": 0.05, "edge_color": [3.2, 1.6, 0.9, 1], "noise": 0.03 }
+```
+
+`displace` makes the surface swell and ripple along its normals, for tissue that breathes and pulses:
+
+```json
+"displace": { "amount": 0.004, "scale": 6, "speed": 3 }
+```
+
+Both work with the built-in programs. A material with a custom `shader` draws the mesh the slow way, vertex by vertex,
+without them.
+
 ## Decals
 
 A `decal` projects a texture onto whatever lies under it: grass, slabs, slopes, the edges of blocks. It reads the

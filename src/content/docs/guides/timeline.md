@@ -39,7 +39,9 @@ Particles get their own `t` over their life.
 ```
 
 Offsets are in blocks, in the anchor's frame: x to the right, y up, z forward. `align` picks the frame: the entity's
-body, its head (where it looks), the world axes or the camera. `follow: false` leaves the track where it started.
+body, its head (where it looks), the world axes, the camera, or `bone`, which turns with the bone it is attached to as
+the model animates. With `bone`, y runs along the bone toward its parent, so an arm's y points up the arm to the
+shoulder. `follow: false` leaves the track where it started.
 `"at": "target"` uses the second anchor set with `.to(...)`.
 
 ## Params

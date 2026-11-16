@@ -167,9 +167,10 @@
             "body",
             "head",
             "world",
-            "camera"
+            "camera",
+            "bone"
           ],
-          "description": "Which way the frame faces: the entity's body, its head, the world axes, or the camera.",
+          "description": "Which way the frame faces: the entity's body, its head, the world axes, the camera, or the bone it is attached to, following the bone as it swings (up runs along the bone toward its parent).",
           "default": "body"
         }
       },
@@ -268,6 +269,10 @@
         "fresnel": {
           "$ref": "#/definitions/material_fresnel",
           "description": "Rim lighting for meshes and models."
+        },
+        "shading": {
+          "$ref": "#/definitions/material_shading",
+          "description": "Lights meshes, ribbons and model layers like solid, wet or translucent surfaces."
         },
         "soft": {
           "type": "number",
@@ -909,6 +914,14 @@
           "type": "integer",
           "description": "Segments for round primitives.",
           "default": 24
+        },
+        "reveal": {
+          "$ref": "#/definitions/mesh_reveal",
+          "description": "Grow the mesh into view along an axis."
+        },
+        "displace": {
+          "$ref": "#/definitions/mesh_displace",
+          "description": "Organic movement: the surface swells and ripples along its normals."
         }
       },
       "required": [
@@ -1307,11 +1320,12 @@
         },
         "simulation": {
           "enum": [
+            "auto",
             "cpu",
             "gpu"
           ],
-          "description": "`cpu` supports everything. `gpu` simulates on the graphics card for very large counts, without collisions, trails or particle-spawned effects; alpha-blended GPU particles are not sorted, and values over a particle's life come from a lookup table.",
-          "default": "cpu"
+          "description": "`cpu` supports everything. `gpu` simulates on the graphics card for very large counts, without collisions, trails or particle-spawned effects; alpha-blended GPU particles are not sorted, and values over a particle's life come from a lookup table. `auto` uses the GPU for tracks of 1500 or more additive particles that need nothing the GPU lacks, and the CPU otherwise.",
+          "default": "auto"
         },
         "space": {
           "enum": [
@@ -2069,6 +2083,11 @@
           "$ref": "#/definitions/number",
           "description": "Bloom strength.",
           "default": 0
+        },
+        "shine": {
+          "$ref": "#/definitions/number",
+          "description": "Scales the material's specular highlight on this layer: 0 for dry skin, 1 or more for wet tissue.",
+          "default": 1
         }
       },
       "additionalProperties": false,
@@ -2213,6 +2232,124 @@
           "type": "boolean",
           "description": "Fade the centre out instead of adding a rim (hologram look).",
           "default": false
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "material_shading": {
+      "type": "object",
+      "description": "Studio lighting computed per pixel from the surface's normals: diffuse, subsurface scattering, a specular highlight and relief from the texture.",
+      "properties": {
+        "diffuse": {
+          "$ref": "#/definitions/number",
+          "description": "How strongly the key light shapes the surface.",
+          "default": 1
+        },
+        "ambient": {
+          "$ref": "#/definitions/number",
+          "description": "Light reaching the side facing away.",
+          "default": 0.35
+        },
+        "specular": {
+          "$ref": "#/definitions/number",
+          "description": "Brightness of the wet highlight. Above 1 the highlight glows.",
+          "default": 0.4
+        },
+        "gloss": {
+          "$ref": "#/definitions/number",
+          "description": "Sharpness of the highlight: low is satin, high is wet.",
+          "default": 40
+        },
+        "subsurface": {
+          "$ref": "#/definitions/number",
+          "description": "Light scattering through the surface, 0..1: wraps light round the dark side and glows at the rim, like flesh, wax or leaves.",
+          "default": 0
+        },
+        "subsurface_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the scattered light.",
+          "default": "#ff4a2a"
+        },
+        "bump": {
+          "$ref": "#/definitions/number",
+          "description": "Surface relief taken from the texture's brightness, so fibres, pores and veins catch the light.",
+          "default": 0
+        },
+        "light": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction the key light comes from, in world axes.",
+          "default": [
+            0.4,
+            0.85,
+            0.35
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "mesh_reveal": {
+      "type": "object",
+      "description": "Grows the mesh into view along an axis behind a glowing front.",
+      "properties": {
+        "axis": {
+          "$ref": "#/definitions/vector",
+          "description": "Direction the mesh grows along, in its own axes.",
+          "default": [
+            0,
+            1,
+            0
+          ]
+        },
+        "progress": {
+          "$ref": "#/definitions/number",
+          "description": "How much of the mesh is shown, 0..1 from one end to the other along `axis`.",
+          "default": 1
+        },
+        "edge": {
+          "$ref": "#/definitions/number",
+          "description": "Width of the glowing growth front in blocks.",
+          "default": 0.03
+        },
+        "edge_color": {
+          "$ref": "#/definitions/color",
+          "description": "Colour of the growth front; values above 1 glow.",
+          "default": "#ffffff"
+        },
+        "noise": {
+          "$ref": "#/definitions/number",
+          "description": "Raggedness of the front in blocks.",
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\$|_comment)": {}
+      }
+    },
+    "mesh_displace": {
+      "type": "object",
+      "description": "Moves the surface in and out along its normals with noise.",
+      "properties": {
+        "amount": {
+          "$ref": "#/definitions/number",
+          "description": "How far the surface moves, in blocks.",
+          "default": 0.02
+        },
+        "scale": {
+          "$ref": "#/definitions/number",
+          "description": "Size of the ripples: larger is finer.",
+          "default": 6
+        },
+        "speed": {
+          "$ref": "#/definitions/number",
+          "description": "How fast the ripples move.",
+          "default": 1
         }
       },
       "additionalProperties": false,
